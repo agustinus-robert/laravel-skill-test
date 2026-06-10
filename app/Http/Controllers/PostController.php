@@ -9,17 +9,12 @@ use App\Repositories\PostRepository;
 
 class PostController extends Controller
 {
-    protected PostRepository $postRepository;
-
-    public function __construct()
-    {
-        $this->postRepository = new PostRepository;
-    }
+    use PostRepository;
 
     public function index()
     {
         return response()->json(
-            $this->postRepository->paginateActive(20)
+            $this->paginateActive(20)
         );
     }
 
@@ -30,7 +25,7 @@ class PostController extends Controller
 
     public function store(StoreRequest $request)
     {
-        $post = $this->postRepository->create(
+        $post = $this->create(
             $request->transform(),
             $request->user()->id
         );
@@ -40,7 +35,7 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
-        $post = $this->postRepository->findActive($post);
+        $post = $this->findActive($post);
 
         if (! $post) {
             abort(404);
@@ -60,7 +55,7 @@ class PostController extends Controller
     {
         $this->authorize('update', $post);
 
-        $post = $this->postRepository->update(
+        $post = $this->update(
             $post,
             $request->transform()
         );
@@ -72,7 +67,7 @@ class PostController extends Controller
     {
         $this->authorize('delete', $post);
 
-        $this->postRepository->delete($post);
+        $this->delete($post);
 
         return response()->json([
             'message' => 'Post deleted successfully',
