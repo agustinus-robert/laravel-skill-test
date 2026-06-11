@@ -15,7 +15,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::resource('posts', PostController::class);
+    Route::get('posts/create', [PostController::class, 'create']);
+    Route::post('posts', [PostController::class, 'store']);
+    Route::get('posts/{post}/edit', [PostController::class, 'edit']);
+    Route::put('posts/{post}', [PostController::class, 'update']);
+    Route::delete('posts/{post}', [PostController::class, 'destroy']);
+    Route::get('posts', [PostController::class, 'index']);
+    Route::get('posts/{post}', [PostController::class, 'show']);
 });
 
 require __DIR__.'/settings.php';
