@@ -13,8 +13,13 @@ class Post extends Model
     protected $fillable = [
         'title',
         'content',
+        'user_id',
         'is_draft',
         'published_at',
+    ];
+
+    protected $appends = [
+        'status',
     ];
 
     protected function casts(): array
@@ -33,30 +38,19 @@ class Post extends Model
     public function getStatusAttribute(): string
     {
         if ($this->is_draft) {
-            return 'draft';
+            return 'Draft';
         }
 
         if ($this->published_at?->isFuture()) {
-            return 'scheduled';
+            return 'Scheduled';
         }
 
-        return 'published';
+        return 'Published';
     }
 
     public function scopePublished($query)
     {
         return $query
-            ->where('is_draft', false)
-            ->where('published_at', '<=', now());
-    }
-
-    public function scopeActive($query)
-    {
-        return $query
-            ->where('is_draft', false)
-            ->where(function ($q) {
-                $q->whereNull('published_at')
-                    ->orWhere('published_at', '<=', now());
-            });
+            ->where('is_draft', false);
     }
 }
