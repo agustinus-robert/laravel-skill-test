@@ -10,7 +10,12 @@ trait PostRepository
     public function paginateActive(int $perPage = 20): LengthAwarePaginator
     {
         return Post::with('user')
-            ->active()
+            ->where('is_draft', false)
+            ->where(function ($query) {
+                $query
+                    ->whereNull('published_at')
+                    ->orWhere('published_at', '<=', now());
+            })
             ->latest()
             ->paginate($perPage);
     }
@@ -27,7 +32,7 @@ trait PostRepository
         return $post->load('user');
     }
 
-    public function create(array $data, int $userId): Post
+    public function storePost(array $data, int $userId): Post
     {
         return Post::create(
             array_merge($data, [
@@ -36,7 +41,7 @@ trait PostRepository
         );
     }
 
-    public function update(Post $post, array $data): Post
+    public function updatePost(Post $post, array $data): Post
     {
         $post->update(array_filter($data, function ($value) {
             return ! is_null($value);
@@ -45,7 +50,7 @@ trait PostRepository
         return $post->refresh();
     }
 
-    public function delete(Post $post): bool
+    public function deletePost(Post $post): bool
     {
         return $post->delete();
     }
