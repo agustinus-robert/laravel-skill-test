@@ -1,3 +1,7 @@
+## SQLite Setup
+
+Create `database/database.sqlite`, set `DB_CONNECTION=sqlite` and `DB_DATABASE=database/database.sqlite`, then run `php artisan migrate:fresh --seed` (default seeded user password is `password`).
+
 # Laravel Skill Test
 
 ## 1. Overview
