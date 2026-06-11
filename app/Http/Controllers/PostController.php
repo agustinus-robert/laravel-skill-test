@@ -6,10 +6,11 @@ use App\Http\Requests\Post\StoreRequest;
 use App\Http\Requests\Post\UpdateRequest;
 use App\Models\Post;
 use App\Repositories\PostRepository;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class PostController extends Controller
 {
-    use PostRepository;
+    use AuthorizesRequests, PostRepository;
 
     public function index()
     {
@@ -25,7 +26,7 @@ class PostController extends Controller
 
     public function store(StoreRequest $request)
     {
-        $post = $this->create(
+        $post = $this->storePost(
             $request->transform(),
             $request->user()->id
         );
@@ -55,7 +56,7 @@ class PostController extends Controller
     {
         $this->authorize('update', $post);
 
-        $post = $this->update(
+        $post = $this->updatePost(
             $post,
             $request->transform()
         );
@@ -67,7 +68,7 @@ class PostController extends Controller
     {
         $this->authorize('delete', $post);
 
-        $this->delete($post);
+        $this->deletePost($post);
 
         return response()->json([
             'message' => 'Post deleted successfully',
