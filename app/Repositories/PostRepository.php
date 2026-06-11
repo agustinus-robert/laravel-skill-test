@@ -10,26 +10,17 @@ trait PostRepository
     public function paginateActive(int $perPage = 20): LengthAwarePaginator
     {
         return Post::with('user')
-            ->where('is_draft', false)
-            ->where(function ($query) {
-                $query
-                    ->whereNull('published_at')
-                    ->orWhere('published_at', '<=', now());
-            })
+            ->active()
             ->latest()
             ->paginate($perPage);
     }
 
     public function findActive(Post $post): ?Post
     {
-        if (
-            $post->is_draft ||
-            ($post->published_at && $post->published_at->isFuture())
-        ) {
-            return null;
-        }
-
-        return $post->load('user');
+        return Post::active()
+            ->with('user')
+            ->whereKey($post->id)
+            ->first();
     }
 
     public function storePost(array $data, int $userId): Post
