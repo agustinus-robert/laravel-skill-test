@@ -22,13 +22,10 @@ class Post extends Model
         'status',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'is_draft' => 'boolean',
-            'published_at' => 'datetime',
-        ];
-    }
+    protected $casts = [
+        'is_draft' => 'boolean',
+        'published_at' => 'datetime',
+    ];
 
     public function user()
     {
@@ -38,19 +35,23 @@ class Post extends Model
     public function getStatusAttribute(): string
     {
         if ($this->is_draft) {
-            return 'Draft';
+            return 'draft';
         }
 
-        if ($this->published_at?->isFuture()) {
-            return 'Scheduled';
+        if ($this->published_at && $this->published_at->gt(now())) {
+            return 'scheduled';
         }
 
-        return 'Published';
+        return 'published';
     }
 
-    public function scopePublished($query)
+    public function scopeActive($query)
     {
         return $query
-            ->where('is_draft', false);
+            ->where('is_draft', false)
+            ->where(function ($q) {
+                $q->whereNull('published_at')
+                    ->orWhere('published_at', '<=', now());
+            });
     }
 }

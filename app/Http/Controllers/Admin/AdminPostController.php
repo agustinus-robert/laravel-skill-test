@@ -36,10 +36,9 @@ class AdminPostController extends Controller
             $request->user()->id
         );
 
-        return redirect()->route(
-            'admin.posts.index',
-            ['message' => 'added']
-        );
+        return redirect()
+            ->route('admin.posts.index')
+            ->with('success', 'Data added successfully');
     }
 
     public function edit(Post $post)
@@ -61,10 +60,9 @@ class AdminPostController extends Controller
             $request->transform()
         );
 
-        return redirect()->route(
-            'admin.posts.index',
-            ['message' => 'updated']
-        );
+        return redirect()
+            ->route('admin.posts.index')
+            ->with('success', 'Data updated successfully');
     }
 
     public function destroy(Post $post)
@@ -73,9 +71,8 @@ class AdminPostController extends Controller
 
         $this->deletePost($post);
 
-        return redirect()->route(
-            'admin.posts.index',
-            ['message' => 'deleted']
-        );
+        return redirect()
+            ->route('admin.posts.index')
+            ->with('success', 'Data deleted successfully');
     }
 }

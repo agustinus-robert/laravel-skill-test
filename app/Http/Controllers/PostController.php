@@ -15,12 +15,17 @@ class PostController extends Controller
     public function index()
     {
         return response()->json(
-            $this->paginateActive(20)
+            Post::with('user')
+                ->active()
+                ->latest()
+                ->paginate(20)
         );
     }
 
     public function create()
     {
+        $this->authorize('create', Post::class);
+
         return 'posts.create';
     }
 
@@ -42,7 +47,7 @@ class PostController extends Controller
             abort(404);
         }
 
-        return response()->json($post);
+        return response()->json($post->load('user'));
     }
 
     public function edit(Post $post)
@@ -56,12 +61,9 @@ class PostController extends Controller
     {
         $this->authorize('update', $post);
 
-        $post = $this->updatePost(
-            $post,
-            $request->transform()
+        return response()->json(
+            $this->updatePost($post, $request->transform())
         );
-
-        return response()->json($post);
     }
 
     public function destroy(Post $post)
