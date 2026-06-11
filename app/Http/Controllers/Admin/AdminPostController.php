@@ -32,7 +32,7 @@ class AdminPostController extends Controller
     public function store(StoreRequest $request)
     {
         $this->storePost(
-            $request->transform(),
+            $request->validatedData(),
             $request->user()->id
         );
 
@@ -57,7 +57,7 @@ class AdminPostController extends Controller
 
         $this->updatePost(
             $post,
-            $request->transform()
+            $request->validatedData()
         );
 
         return redirect()

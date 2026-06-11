@@ -8,7 +8,7 @@ class StoreRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return $this->user() !== null;
     }
 
     public function rules(): array
@@ -21,13 +21,11 @@ class StoreRequest extends FormRequest
         ];
     }
 
-    public function transform(): array
+    public function validatedData(): array
     {
         return [
-            'title' => $this->input('title'),
-            'content' => $this->input('content'),
+            ...$this->validated(),
             'is_draft' => (bool) $this->input('is_draft'),
-            'published_at' => $this->input('published_at'),
         ];
     }
 }

@@ -32,7 +32,7 @@ class PostController extends Controller
     public function store(StoreRequest $request)
     {
         $post = $this->storePost(
-            $request->transform(),
+            $request->validatedData(),
             $request->user()->id
         );
 
@@ -62,7 +62,7 @@ class PostController extends Controller
         $this->authorize('update', $post);
 
         return response()->json(
-            $this->updatePost($post, $request->transform())
+            $this->updatePost($post, $request->validatedData())
         );
     }
 
